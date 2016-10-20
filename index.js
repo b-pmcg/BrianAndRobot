@@ -7,24 +7,16 @@ const http = require('http');
 const P = config.pnetConfig;
 let count = 0;
 
-// get install twurl
-//  twurl --authorize --consumerkey "key" --consumer-secret "secret" cat ~/.twurlrc
-
-
-//TODO: implement server and monitor tweet stream for hashtags
 http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.write('hello, i know nodejitsu.')
+  res.write('Hola.')
   res.end();
 }).listen(3000);
 
-//var stream = T.stream('statuses/filter', { track: '#stashbot', language: 'en' })
 var stream = T.stream('user')
 
 stream.on('tweet', function (tweet) {
-  //console.log(tweet)
-  // const currentTweet = reply[i];;
-    //check if hashtag exists:
+    //check if a hashtag exists:
     const hashtag = tweet.entities.hashtags[0];
     console.log('tweet text:', tweet.text);
     if (hashtag) {
@@ -64,42 +56,6 @@ function sendTweet(message) {
   });
 };
 
-// function getMentions() {
-//   T.get('/statuses/mentions_timeline', {count: 10}, function(err, reply) {
-//     if(err) {
-//       console.log('error:', err);
-//     } else {
-//       for(let i = 0; i < reply.length; i++) {
-//         const currentTweet = reply[i];;
-//           //check if hashtag exists:
-//           const hashtag = currentTweet.entities.hashtags[0];
-//           if (hashtag) {
-//             const userObject = {
-//               iter_id: i,
-//               user: '',
-//               hashtag: '',
-//               dates: {
-//                 first: {
-//                   season: '',
-//                   year: 'whatevs'
-//                 },
-//                 second: {
-//                   year: '',
-//                   month: ''
-//                 }
-//               }
-//             };
-//             userObject.user = currentTweet.user.screen_name;
-//             userObject.hashtag = [hashtag.text];
-//             prepareDate(userObject);
-//           } else if (!hashtag){
-//             console.log(`No Hashtag for ${currentTweet.user.screen_name}`);
-//           };
-//       }
-//     }
-//   });
-// };
-
 //seperates the season and year from the hashtag
 function prepareDate(userObject) {
   const dates = userObject.hashtag;
@@ -107,19 +63,13 @@ function prepareDate(userObject) {
     const index = dates[i].search(/\d/);
     userObject.dates.first.season = dates[i].substr(0, index);
     userObject.dates.first.year = dates[i].substr(index);
-    // console.log("prepDate year type: " + (typeof userObject.dates.first.year));
     console.log(`Step 1: Prepping date ${userObject.dates.first.season} & ${userObject.dates.first.year}`);
     if (isNaN(userObject.dates.first.year)) {
-      // console.log('isNaN is true, year is not a number.');
-      // console.log(isNaN(userObject.dates.first.year));
       return;
     }
     buildDate(userObject);
   }
 };
-
-//runs app with twitter api:
-//getMentions();
 
 //converts season into a random month and formats year properly for pnet API
 function buildDate(userObject) {
@@ -149,7 +99,6 @@ function buildDate(userObject) {
       yr = '20' + year;
     }
     const month = months[Math.floor(Math.random()*months.length)];
-    //const yearString = yr.toString();
     userObject.dates.second.year = yr;
     userObject.dates.second.month = month;
     console.log(`Step 2: Building query with ${userObject.dates.second.month} & ${userObject.dates.second.year}`);
