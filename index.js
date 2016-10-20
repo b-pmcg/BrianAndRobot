@@ -5,6 +5,7 @@ const config = require('./config');
 const T = new Twit(config.twitConfig);
 const http = require('http');
 const P = config.pnetConfig;
+let count = 0;
 
 // get install twurl
 //  twurl --authorize --consumerkey "key" --consumer-secret "secret" cat ~/.twurlrc
@@ -121,6 +122,7 @@ function prepareDate(userObject) {
 
 //converts season into a random month and formats year properly for pnet API
 function buildDate(userObject) {
+  count++
   const season = userObject.dates.first.season;
   const year = userObject.dates.first.year;
   let months = [];
@@ -153,9 +155,6 @@ function buildDate(userObject) {
     composeTweet(userObject);
 };
 
-
-let count = 0
-
 //queries pnet API and composes the tweet.
 function composeTweet(userObject) {
   const year = userObject.dates.second.year;
@@ -174,15 +173,15 @@ function composeTweet(userObject) {
     //if pnet API reports shows found, run buildDate again
     if (data === '{"success":0,"reason":"No Shows Found"}') {
       console.log(`No shows found with ${month} & ${year}, trying again...`);
-      // count++
-      // console.log(count);
-      // if (count < 10) {
-      //   buildDate(userObject);
-      // } else {
-      //   console.log("count greater than 10, " + count);
-      //   return;
-      // }
-      buildDate(userObject);
+      //check if count is less than 10
+      if (count < 10) {
+        console.log(`Count: ${count}`);
+        buildDate(userObject);
+      } else if (count >= 10) {
+        console.log(`Count is ${count}, terminating.`);
+        return;
+      }
+      //if a show is found on pnet API, reset count to zero
     } else {
       count = 0;
       //check to see if show exists on phishtracks.com
