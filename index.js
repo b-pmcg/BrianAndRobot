@@ -58,6 +58,7 @@ function sendTweet(message) {
       console.log('error:', err);
     } else {
       console.log('tweet:', reply.text);
+      count = 0;
       return;
     }
   });
@@ -183,7 +184,6 @@ function composeTweet(userObject) {
       }
       //if a show is found on pnet API, reset count to zero
     } else {
-      count = 0;
       //check to see if show exists on phishtracks.com
       request.get({
         url: `http://phishtracks.com/shows/${jsonData[0].showdate}`
