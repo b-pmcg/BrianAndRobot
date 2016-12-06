@@ -56,8 +56,26 @@ function sendTweet(message) {
   });
 };
 
+const userObject = {
+  user: '',
+  hashtag: '',
+  dates: {
+    first: {
+      season: '',
+      year: ''
+    },
+    second: {
+      year: '',
+      month: ''
+    }
+  }
+};
+
+
 //seperates the season and year from the hashtag
 function prepareDate(userObject) {
+  let test = "hi";
+  return test;
   const dates = userObject.hashtag;
   for (let i = 0; i < dates.length; i++) {
     const index = dates[i].search(/\d/);
@@ -81,6 +99,9 @@ function buildDate(userObject) {
   //set months to an array of three numbers based on season input
     switch (season) {
       case "fall":
+        months = ['09', '10', '11'];
+        break;
+      case "autumn":
         months = ['09', '10', '11'];
         break;
       case "winter":
