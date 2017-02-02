@@ -15,10 +15,14 @@ http.createServer(function (req, res) {
 
 var stream = T.stream('user')
 
+//1st call, listens for activity on BrianAndRobot account
 stream.on('tweet', function (tweet) {
-    //check if a hashtag exists:
+  debugger;
+    //if hashtag exists, create an object to store data
+    //TODO: move object into seperate class
     const hashtag = tweet.entities.hashtags[0];
     console.log('tweet text:', tweet.text);
+    debugger;
     if (hashtag) {
       const userObject = {
         user: '',
@@ -34,9 +38,12 @@ stream.on('tweet', function (tweet) {
           }
         }
       };
+      //assign the name of the person who tweeted to the userObject & the hashtag
       userObject.user = tweet.user.screen_name;
       userObject.hashtag = [hashtag.text];
       console.log(userObject);
+      debugger;
+      //if there's a hashtag send the object to prepareDate
       prepareDate(userObject);
     } else if (!hashtag){
       console.log(`No Hashtag for ${tweet.user.screen_name}`);
@@ -44,6 +51,7 @@ stream.on('tweet', function (tweet) {
 });
 
 
+//last call, sends tweet
 function sendTweet(message) {
   T.post('statuses/update', {status: message}, function(err, reply) {
     if (err) {
@@ -56,26 +64,27 @@ function sendTweet(message) {
   });
 };
 
-const userObject = {
-  user: '',
-  hashtag: '',
-  dates: {
-    first: {
-      season: '',
-      year: ''
-    },
-    second: {
-      year: '',
-      month: ''
-    }
-  }
-};
+// why is this here?
+// const userObject = {
+//   user: '',
+//   hashtag: '',
+//   dates: {
+//     first: {
+//       season: '',
+//       year: ''
+//     },
+//     second: {
+//       year: '',
+//       month: ''
+//     }
+//   }
+// };
 
 
-//seperates the season and year from the hashtag
+//2nd call seperates the season and year from the hashtag
+//TODO: couldn't this be a method of the user class?
 function prepareDate(userObject) {
-  let test = "hi";
-  return test;
+  debugger;
   const dates = userObject.hashtag;
   for (let i = 0; i < dates.length; i++) {
     const index = dates[i].search(/\d/);
@@ -83,13 +92,16 @@ function prepareDate(userObject) {
     userObject.dates.first.year = dates[i].substr(index);
     console.log(`Step 1: Prepping date ${userObject.dates.first.season} & ${userObject.dates.first.year}`);
     if (isNaN(userObject.dates.first.year)) {
+      console.log("Not a number.");
       return;
     }
+    debugger;
+    //sends the object to buildDate function
     buildDate(userObject);
   }
 };
 
-//converts season into a random month and formats year properly for pnet API
+//3rd call converts season into a random month and formats year properly for pnet API
 function buildDate(userObject) {
   count++
   const season = userObject.dates.first.season;
@@ -119,6 +131,7 @@ function buildDate(userObject) {
     } else {
       yr = '20' + year;
     }
+    //pick a random month within selected season
     const month = months[Math.floor(Math.random()*months.length)];
     userObject.dates.second.year = yr;
     userObject.dates.second.month = month;
@@ -126,13 +139,14 @@ function buildDate(userObject) {
     composeTweet(userObject);
 };
 
-//queries pnet API and composes the tweet.
+//4th call queries pnet API and composes the tweet.
 function composeTweet(userObject) {
   const year = userObject.dates.second.year;
   const month = userObject.dates.second.month;
   const season = userObject.dates.first.season;
 
   //pnet API returns all shows from specified month and year
+  //TODO: rewrite for phish.net API v 3
   request.get({
     url: `https://api.phish.net/api.js?api=2.0&method=pnet.shows.query&format=json&year=${year}&month=${month}&apikey=${P.apikey}`
   },
