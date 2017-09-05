@@ -3,4 +3,4 @@ A Twitter-bot that responds to your requests to listen to a show from your favor
 Try tweeting: **@BrianAndRobot send me some #fall97!**
 
 
-![@rianAndRobot Screenshot](https://i.imgur.com/7NHFBsd.png)
+![@BrianAndRobot Screenshot](https://i.imgur.com/7NHFBsd.png)
