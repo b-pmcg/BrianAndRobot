@@ -47,7 +47,7 @@ stream.on('tweet', function(tweet) {
 //Mock the user object for debugging and pass to prepareDate()
 // const userObject = {
 //     user: 'obiwan2',
-//     hashtag: '#Summer94',
+//     hashtag: 'Summer94',
 //     dates: {
 //         first: {
 //             season: '',
@@ -63,9 +63,9 @@ stream.on('tweet', function(tweet) {
 
 // 2nd call seperates the season and year from the hashtag
 function prepareDate(userObject) {
-    const dates = userObject.hashtag;
+    const dates = userObject.hashtag.toString();
     const index = dates.search(/\d/);
-    userObject.dates.first.season = dates.substr(1, index - 1);
+    userObject.dates.first.season = dates.substr(0, index);
     userObject.dates.first.year = dates.substr(index);
     console.log(`Step 1: Prepping date ${userObject.dates.first.season} & ${userObject.dates.first.year}`);
     if (isNaN(userObject.dates.first.year)) {
